@@ -1,10 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Лабораторная работа 1</title>
 </head>
 <body>
+    <h1>Форма записи на консультацию</h1>
 
+    <form method="post">
+        {% csrf_token %}
+
+        <p>
+            {{ form.full_name.label_tag }}<br>
+            {{ form.full_name }}
+        </p>
+
+        <p>
+            {{ form.email.label_tag }}<br>
+            {{ form.email }}
+        </p>
+
+        <p>
+            {{ form.consultation_type.label_tag }}<br>
+            {{ form.consultation_type }}
+        </p>
+
+        <p>
+            {{ form.urgent }} {{ form.urgent.label_tag }}
+        </p>
+
+        <p>
+            {{ form.comment.label_tag }}<br>
+            {{ form.comment }}
+        </p>
+
+        <button type="submit">Отправить</button>
+    </form>
+
+    {% if submitted_data %}
+        <h2>Отправленные данные</h2>
+
+        <table border="1" cellpadding="5" cellspacing="0">
+            <tr>
+                <th>Поле</th>
+                <th>Значение</th>
+            </tr>
+            <tr>
+                <td>ФИО</td>
+                <td>{{ submitted_data.full_name }}</td>
+            </tr>
+            <tr>
+                <td>Электронная почта</td>
+                <td>{{ submitted_data.email }}</td>
+            </tr>
+            <tr>
+                <td>Тип консультации</td>
+                <td>{{ submitted_data.consultation_type }}</td>
+            </tr>
+            <tr>
+                <td>Срочно нужна консультация</td>
+                <td>
+                    {% if submitted_data.urgent %}
+                        Да
+                    {% else %}
+                        Нет
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Комментарий</td>
+                <td>
+                    {% if submitted_data.comment %}
+                        {{ submitted_data.comment }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    {% endif %}
 </body>
 </html>

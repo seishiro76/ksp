@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная 8</title>
+</head>
+<body>
+    <h1>Добавление заявки на консультацию</h1>
+
+    {% if success_message %}
+        <p><strong>{{ success_message }}</strong></p>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <h2>Данные клиента</h2>
+        <p>
+            {{ client_form.full_name.label_tag }}<br>
+            {{ client_form.full_name }}
+        </p>
+        <p>
+            {{ client_form.email.label_tag }}<br>
+            {{ client_form.email }}
+        </p>
+        <p>
+            {{ client_form.confirm_email.label_tag }}<br>
+            {{ client_form.confirm_email }}
+        </p>
+        <p>
+            {{ client_form.phone.label_tag }}<br>
+            {{ client_form.phone }}
+        </p>
+
+        <h2>Данные заявки</h2>
+        <p>
+            {{ request_form.consultation_type.label_tag }}<br>
+            {{ request_form.consultation_type }}
+        </p>
+        <p>
+            {{ request_form.urgent }} {{ request_form.urgent.label_tag }}
+        </p>
+        <p>
+            {{ request_form.comment.label_tag }}<br>
+            {{ request_form.comment }}
+        </p>
+        <p>
+            {{ request_form.agree_rules }} {{ request_form.agree_rules.label_tag }}
+        </p>
+
+        <h2>Документ</h2>
+        <p>
+            {{ document_form.title.label_tag }}<br>
+            {{ document_form.title }}
+        </p>
+        <p>
+            {{ document_form.file.label_tag }}<br>
+            {{ document_form.file }}
+        </p>
+
+        <button type="submit">Сохранить</button>
+    </form>
+
+    <hr>
+
+    <h2>Таблица клиентов</h2>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>ID</th>
+            <th>ФИО</th>
+            <th>Email</th>
+            <th>Телефон</th>
+        </tr>
+        {% for client in clients %}
+        <tr>
+            <td>{{ client.id }}</td>
+            <td>{{ client.full_name }}</td>
+            <td>{{ client.email }}</td>
+            <td>{{ client.phone }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Таблица заявок</h2>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>ID</th>
+            <th>Клиент</th>
+            <th>Тип консультации</th>
+            <th>Срочно</th>
+            <th>Комментарий</th>
+        </tr>
+        {% for req in requests %}
+        <tr>
+            <td>{{ req.id }}</td>
+            <td>{{ req.client.full_name }}</td>
+            <td>{{ req.consultation_type }}</td>
+            <td>
+                {% if req.urgent %}Да{% else %}Нет{% endif %}
+            </td>
+            <td>{{ req.comment }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Таблица документов</h2>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>ID</th>
+            <th>Заявка</th>
+            <th>Название документа</th>
+            <th>Файл</th>
+        </tr>
+        {% for doc in documents %}
+        <tr>
+            <td>{{ doc.id }}</td>
+            <td>{{ doc.request.id }}</td>
+            <td>{{ doc.title }}</td>
+            <td>
+                <a href="{{ doc.file.url }}">{{ doc.file.name }}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

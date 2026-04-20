@@ -117,7 +117,11 @@
             <td>{{ doc.request.id }}</td>
             <td>{{ doc.title }}</td>
             <td>
-                <a href="{{ doc.file.url }}">{{ doc.file.name }}</a>
+                {% if doc.file %}
+                    <a href="{{ doc.file.url }}">{{ doc.file.name }}</a>
+                {% else %}
+                    Файл не загружен
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

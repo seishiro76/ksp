@@ -40,7 +40,7 @@ class ConsultationDocument(models.Model):
         verbose_name="Заявка"
     )
     title = models.CharField("Название документа", max_length=100)
-    file = models.FileField("Файл", upload_to="documents/")
+    file = models.FileField("Файл", upload_to="documents/", blank=True, null=True)
 
     def __str__(self):
         return self.title

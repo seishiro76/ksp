@@ -1,6 +1,11 @@
 from django.urls import path
-from .views import consultation_create_view
+from . import views
+
 
 urlpatterns = [
-    path("", consultation_create_view, name="consultation_create"),
+    path("", views.consultation_create_view, name="consultation_create"),
+    path("requests/", views.request_list_view, name="request_list"),
+    path("requests/<int:pk>/", views.request_detail_view, name="request_detail"),
+    path("requests/<int:pk>/edit/", views.request_edit_view, name="request_edit"),
+    path("requests/<int:pk>/remove/", views.request_remove_view, name="request_remove"),
 ]

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование заявки</title>
+</head>
+<body>
+    <h1>Редактирование заявки</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <h2>Данные клиента</h2>
+
+        <p>
+            {{ client_form.full_name.label_tag }}<br>
+            {{ client_form.full_name }}
+        </p>
+        <p>
+            {{ client_form.email.label_tag }}<br>
+            {{ client_form.email }}
+        </p>
+        <p>
+            {{ client_form.confirm_email.label_tag }}<br>
+            {{ client_form.confirm_email }}
+        </p>
+        <p>
+            {{ client_form.phone.label_tag }}<br>
+            {{ client_form.phone }}
+        </p>
+
+        <h2>Данные заявки</h2>
+
+        <p>
+            {{ request_form.consultation_type.label_tag }}<br>
+            {{ request_form.consultation_type }}
+        </p>
+        <p>
+            {{ request_form.urgent }} {{ request_form.urgent.label_tag }}
+        </p>
+        <p>
+            {{ request_form.comment.label_tag }}<br>
+            {{ request_form.comment }}
+        </p>
+        <p>
+            {{ request_form.agree_rules }} {{ request_form.agree_rules.label_tag }}
+        </p>
+
+        <button type="submit">Сохранить изменения</button>
+    </form>
+
+    <p>
+        <a href="{% url 'request_detail' consultation_request.id %}">Назад</a>
+    </p>
+</body>
+</html>

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Client(models.Model):
     full_name = models.CharField("ФИО", max_length=100)
     email = models.EmailField("Электронная почта")
@@ -28,6 +29,7 @@ class ConsultationRequest(models.Model):
     )
     urgent = models.BooleanField("Срочно", default=False)
     comment = models.TextField("Комментарий", blank=True)
+    removed = models.BooleanField("Удалено", default=False)
 
     def __str__(self):
         return f"Заявка: {self.client.full_name}"

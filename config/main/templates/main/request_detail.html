@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Подробная информация о заявке</title>
+</head>
+<body>
+    <h1>Подробная информация о заявке</h1>
+
+    <h2>Данные клиента</h2>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>ФИО</th>
+            <td>{{ consultation_request.client.full_name }}</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>{{ consultation_request.client.email }}</td>
+        </tr>
+        <tr>
+            <th>Телефон</th>
+            <td>{{ consultation_request.client.phone }}</td>
+        </tr>
+    </table>
+
+    <h2>Данные заявки</h2>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>ID заявки</th>
+            <td>{{ consultation_request.id }}</td>
+        </tr>
+        <tr>
+            <th>Тип консультации</th>
+            <td>{{ consultation_request.consultation_type }}</td>
+        </tr>
+        <tr>
+            <th>Срочно</th>
+            <td>
+                {% if consultation_request.urgent %}
+                    Да
+                {% else %}
+                    Нет
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>Комментарий</th>
+            <td>{{ consultation_request.comment }}</td>
+        </tr>
+    </table>
+
+    <h2>Документы</h2>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <tr>
+            <th>ID</th>
+            <th>Название документа</th>
+            <th>Файл</th>
+        </tr>
+
+        {% for doc in documents %}
+        <tr>
+            <td>{{ doc.id }}</td>
+            <td>{{ doc.title }}</td>
+            <td>
+                {% if doc.file %}
+                    <a href="{{ doc.file.url }}">{{ doc.file.name }}</a>
+                {% else %}
+                    Файл не загружен
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">Документы отсутствуют</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p>
+        <a href="{% url 'request_edit' consultation_request.id %}">Изменить</a>
+        <a href="{% url 'request_list' %}">Назад к списку</a>
+    </p>
+</body>
+</html>

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ClientForm, RequestForm, DocumentForm
 from .models import Client, ConsultationRequest, ConsultationDocument
 
@@ -33,7 +33,7 @@ def consultation_create_view(request):
         document_form = DocumentForm()
 
     clients = Client.objects.all().order_by("-id")
-    requests = ConsultationRequest.objects.all().order_by("-id")
+    requests = ConsultationRequest.objects.filter(removed=False).order_by("-id")
     documents = ConsultationDocument.objects.all().order_by("-id")
 
     context = {
@@ -47,3 +47,73 @@ def consultation_create_view(request):
     }
 
     return render(request, "main/consultation_page.html", context)
+
+
+def request_list_view(request):
+    requests = ConsultationRequest.objects.filter(removed=False).order_by("-id")
+
+    context = {
+        "requests": requests,
+    }
+
+    return render(request, "main/request_list.html", context)
+
+
+def request_detail_view(request, pk):
+    consultation_request = get_object_or_404(
+        ConsultationRequest,
+        pk=pk,
+        removed=False
+    )
+
+    documents = ConsultationDocument.objects.filter(request=consultation_request)
+
+    context = {
+        "consultation_request": consultation_request,
+        "documents": documents,
+    }
+
+    return render(request, "main/request_detail.html", context)
+
+
+def request_edit_view(request, pk):
+    consultation_request = get_object_or_404(
+        ConsultationRequest,
+        pk=pk,
+        removed=False
+    )
+
+    client = consultation_request.client
+
+    if request.method == "POST":
+        client_form = ClientForm(request.POST, instance=client)
+        request_form = RequestForm(request.POST, instance=consultation_request)
+
+        if client_form.is_valid() and request_form.is_valid():
+            client_form.save()
+            request_form.save()
+
+            return redirect("request_detail", pk=consultation_request.pk)
+    else:
+        client_form = ClientForm(
+            instance=client,
+            initial={"confirm_email": client.email}
+        )
+        request_form = RequestForm(instance=consultation_request)
+
+    context = {
+        "client_form": client_form,
+        "request_form": request_form,
+        "consultation_request": consultation_request,
+    }
+
+    return render(request, "main/request_edit.html", context)
+
+
+def request_remove_view(request, pk):
+    consultation_request = get_object_or_404(ConsultationRequest, pk=pk)
+
+    consultation_request.removed = True
+    consultation_request.save()
+
+    return redirect("request_list")

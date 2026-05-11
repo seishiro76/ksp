@@ -2,10 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Лабораторная 8</title>
+    <title>Лабораторная 9</title>
 </head>
 <body>
     <h1>Добавление заявки на консультацию</h1>
+
+    <p>
+        <a href="{% url 'request_list' %}">Перейти к списку заявок</a>
+    </p>
 
     {% if success_message %}
         <p><strong>{{ success_message }}</strong></p>
@@ -78,6 +82,10 @@
             <td>{{ client.email }}</td>
             <td>{{ client.phone }}</td>
         </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Клиентов нет</td>
+        </tr>
         {% endfor %}
     </table>
 
@@ -89,6 +97,7 @@
             <th>Тип консультации</th>
             <th>Срочно</th>
             <th>Комментарий</th>
+            <th>Действия</th>
         </tr>
         {% for req in requests %}
         <tr>
@@ -96,9 +105,22 @@
             <td>{{ req.client.full_name }}</td>
             <td>{{ req.consultation_type }}</td>
             <td>
-                {% if req.urgent %}Да{% else %}Нет{% endif %}
+                {% if req.urgent %}
+                    Да
+                {% else %}
+                    Нет
+                {% endif %}
             </td>
             <td>{{ req.comment }}</td>
+            <td>
+                <a href="{% url 'request_detail' req.id %}">Подробнее</a>
+                <a href="{% url 'request_edit' req.id %}">Изменить</a>
+                <a href="{% url 'request_remove' req.id %}">Удалить</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Заявок нет</td>
         </tr>
         {% endfor %}
     </table>
@@ -123,6 +145,10 @@
                     Файл не загружен
                 {% endif %}
             </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">Документов нет</td>
         </tr>
         {% endfor %}
     </table>

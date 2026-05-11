@@ -1,8 +1,10 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Лабораторная 9</title>
+    <title>Лабораторная 10</title>
 </head>
 <body>
     <h1>Добавление заявки на консультацию</h1>
@@ -115,7 +117,7 @@
             <td>
                 <a href="{% url 'request_detail' req.id %}">Подробнее</a>
                 <a href="{% url 'request_edit' req.id %}">Изменить</a>
-                <a href="{% url 'request_remove' req.id %}">Удалить</a>
+                <a class="remove-link" href="{% url 'request_remove' req.id %}">Удалить</a>
             </td>
         </tr>
         {% empty %}
@@ -152,5 +154,7 @@
         </tr>
         {% endfor %}
     </table>
+
+    <script src="{% static 'main/js/script.js' %}"></script>
 </body>
 </html>

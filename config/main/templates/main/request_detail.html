@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -83,5 +85,7 @@
         <a href="{% url 'request_edit' consultation_request.id %}">Изменить</a>
         <a href="{% url 'request_list' %}">Назад к списку</a>
     </p>
+
+    <script src="{% static 'main/js/script.js' %}"></script>
 </body>
 </html>

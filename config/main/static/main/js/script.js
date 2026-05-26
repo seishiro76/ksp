@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* AJAX 1: проверка email */
+    /* AJAX 1 из лабораторной 11: проверка email */
     if (emailInput) {
         let emailInfo = document.getElementById("email-check-result");
 
@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    /* AJAX 2: получение информации о заявке */
+    /* AJAX 2 из лабораторной 11: получение информации о заявке */
     const ajaxDetailButtons = document.querySelectorAll(".ajax-detail-button");
 
     ajaxDetailButtons.forEach(function (button) {
@@ -181,6 +181,95 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
         });
     });
+
+    /*
+        Лабораторная 12:
+        AJAX-запрос с использованием jQuery Deferred.
+    */
+    if (window.jQuery) {
+        function loadRequestWithDeferred(requestId) {
+            const deferred = $.Deferred();
+
+            $.ajax({
+                url: "/ajax/request/" + requestId + "/",
+                method: "GET",
+                dataType: "json",
+
+                success: function (data) {
+                    deferred.resolve(data);
+                },
+
+                error: function () {
+                    deferred.reject("Ошибка при загрузке данных заявки.");
+                }
+            });
+
+            return deferred.promise();
+        }
+
+        $(".deferred-detail-button").on("click", function () {
+            const requestId = $(this).data("request-id");
+
+            $("#deferred-loader").show();
+
+            $("#deferred-request-info").html("");
+
+            $.when(loadRequestWithDeferred(requestId))
+                .done(function (data) {
+                    let urgentText = "Нет";
+
+                    if (data.urgent) {
+                        urgentText = "Да";
+                    }
+
+                    let documentsText = "Документы отсутствуют";
+
+                    if (data.documents && data.documents.length > 0) {
+                        documentsText = data.documents.join(", ");
+                    }
+
+                    $("#deferred-request-info").html(
+                        "<h2>Информация о заявке, полученная через Deferred AJAX</h2>" +
+                        "<p><strong>ID заявки:</strong> " + data.id + "</p>" +
+                        "<p><strong>Клиент:</strong> " + data.client + "</p>" +
+                        "<p><strong>Email:</strong> " + data.email + "</p>" +
+                        "<p><strong>Телефон:</strong> " + data.phone + "</p>" +
+                        "<p><strong>Тип консультации:</strong> " + data.consultation_type + "</p>" +
+                        "<p><strong>Срочно:</strong> " + urgentText + "</p>" +
+                        "<p><strong>Комментарий:</strong> " + data.comment + "</p>" +
+                        "<p><strong>Документы:</strong> " + documentsText + "</p>" +
+                        "<p><em>Метод done() выполнился, потому что deferred.resolve() получил данные.</em></p>"
+                    );
+
+                    $("#deferred-request-info").css({
+                        "border": "1px solid black",
+                        "padding": "10px",
+                        "margin-top": "20px",
+                        "background-color": "#e8f5e9"
+                    });
+                })
+                .fail(function (errorText) {
+                    $("#deferred-request-info").html(
+                        "<p>" + errorText + "</p>" +
+                        "<p><em>Метод fail() выполнился, потому что был вызван deferred.reject().</em></p>"
+                    );
+
+                    $("#deferred-request-info").css({
+                        "border": "1px solid black",
+                        "padding": "10px",
+                        "margin-top": "20px",
+                        "background-color": "#f8d7da"
+                    });
+                })
+                .always(function () {
+                    $("#deferred-loader").hide();
+
+                    $("#deferred-request-info").append(
+                        "<p><em>Метод always() выполнился после завершения AJAX-запроса.</em></p>"
+                    );
+                });
+        });
+    }
 
     /* Кнопка Наверх */
     const upButton = document.createElement("button");

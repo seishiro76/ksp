@@ -42,7 +42,14 @@
                 <a href="{% url 'request_detail' req.id %}">Подробнее</a>
                 <a href="{% url 'request_edit' req.id %}">Изменить</a>
                 <a class="remove-link" href="{% url 'request_remove' req.id %}">Удалить</a>
-                <button class="ajax-detail-button" data-request-id="{{ req.id }}">Показать через AJAX</button>
+
+                <button type="button" class="ajax-detail-button" data-request-id="{{ req.id }}">
+                    Показать через AJAX
+                </button>
+
+                <button type="button" class="deferred-detail-button" data-request-id="{{ req.id }}">
+                    Показать через Deferred AJAX
+                </button>
             </td>
         </tr>
         {% empty %}
@@ -54,6 +61,13 @@
 
     <div id="ajax-request-info"></div>
 
+    <div id="deferred-loader" style="display: none; margin-top: 20px;">
+        Загрузка данных через Deferred...
+    </div>
+
+    <div id="deferred-request-info"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="{% static 'main/js/script.js' %}"></script>
 </body>
 </html>

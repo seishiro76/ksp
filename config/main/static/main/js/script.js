@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("script.js подключился");
+
     const form = document.querySelector("form");
 
     const phoneInput = document.getElementById("id_phone");
@@ -85,6 +87,102 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    /* AJAX 1: проверка email */
+    if (emailInput) {
+        let emailInfo = document.getElementById("email-check-result");
+
+        if (!emailInfo) {
+            emailInfo = document.createElement("div");
+            emailInfo.id = "email-check-result";
+            emailInfo.style.marginTop = "5px";
+            emailInput.insertAdjacentElement("afterend", emailInfo);
+        }
+
+        emailInput.addEventListener("blur", function () {
+            const email = emailInput.value.trim();
+
+            if (email.length === 0) {
+                emailInfo.textContent = "";
+                return;
+            }
+
+            fetch("/ajax/check-email/?email=" + encodeURIComponent(email))
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.exists) {
+                        emailInfo.textContent = "Клиент с таким email уже есть в базе данных.";
+                        emailInfo.style.color = "red";
+                    } else {
+                        emailInfo.textContent = "Такого email ещё нет в базе данных.";
+                        emailInfo.style.color = "green";
+                    }
+                })
+                .catch(function () {
+                    emailInfo.textContent = "Ошибка AJAX-запроса при проверке email.";
+                    emailInfo.style.color = "red";
+                });
+        });
+    }
+
+    /* AJAX 2: получение информации о заявке */
+    const ajaxDetailButtons = document.querySelectorAll(".ajax-detail-button");
+
+    ajaxDetailButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            let ajaxRequestInfo = document.getElementById("ajax-request-info");
+
+            if (!ajaxRequestInfo) {
+                ajaxRequestInfo = document.createElement("div");
+                ajaxRequestInfo.id = "ajax-request-info";
+                document.body.appendChild(ajaxRequestInfo);
+            }
+
+            const requestId = button.getAttribute("data-request-id");
+
+            ajaxRequestInfo.innerHTML = "<p>Загрузка данных заявки...</p>";
+            ajaxRequestInfo.style.border = "1px solid black";
+            ajaxRequestInfo.style.padding = "10px";
+            ajaxRequestInfo.style.marginTop = "20px";
+            ajaxRequestInfo.style.backgroundColor = "#f2f2f2";
+
+            fetch("/ajax/request/" + requestId + "/")
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    let urgentText = "Нет";
+
+                    if (data.urgent) {
+                        urgentText = "Да";
+                    }
+
+                    let documentsText = "Документы отсутствуют";
+
+                    if (data.documents && data.documents.length > 0) {
+                        documentsText = data.documents.join(", ");
+                    }
+
+                    ajaxRequestInfo.innerHTML =
+                        "<h2>Информация о заявке, полученная через AJAX</h2>" +
+                        "<p><strong>ID заявки:</strong> " + data.id + "</p>" +
+                        "<p><strong>Клиент:</strong> " + data.client + "</p>" +
+                        "<p><strong>Email:</strong> " + data.email + "</p>" +
+                        "<p><strong>Телефон:</strong> " + data.phone + "</p>" +
+                        "<p><strong>Тип консультации:</strong> " + data.consultation_type + "</p>" +
+                        "<p><strong>Срочно:</strong> " + urgentText + "</p>" +
+                        "<p><strong>Комментарий:</strong> " + data.comment + "</p>" +
+                        "<p><strong>Документы:</strong> " + documentsText + "</p>";
+                })
+                .catch(function () {
+                    ajaxRequestInfo.innerHTML = "<p>Ошибка AJAX-запроса при получении заявки.</p>";
+                    ajaxRequestInfo.style.color = "red";
+                });
+        });
+    });
+
+    /* Кнопка Наверх */
     const upButton = document.createElement("button");
     upButton.textContent = "Наверх";
     upButton.id = "upButton";
@@ -111,6 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    /* Модальное окно удаления */
     const removeLinks = document.querySelectorAll(".remove-link");
 
     const modalBackground = document.createElement("div");

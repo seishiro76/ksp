@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ClientForm, RequestForm, DocumentForm
 from .models import Client, ConsultationRequest, ConsultationDocument
@@ -117,3 +118,40 @@ def request_remove_view(request, pk):
     consultation_request.save()
 
     return redirect("request_list")
+
+
+def ajax_check_email_view(request):
+    email = request.GET.get("email", "")
+
+    email_exists = Client.objects.filter(email=email).exists()
+
+    return JsonResponse({
+        "email": email,
+        "exists": email_exists,
+    })
+
+
+def ajax_request_detail_view(request, pk):
+    consultation_request = get_object_or_404(
+        ConsultationRequest,
+        pk=pk,
+        removed=False
+    )
+
+    documents = ConsultationDocument.objects.filter(request=consultation_request)
+
+    document_titles = []
+
+    for document in documents:
+        document_titles.append(document.title)
+
+    return JsonResponse({
+        "id": consultation_request.id,
+        "client": consultation_request.client.full_name,
+        "email": consultation_request.client.email,
+        "phone": consultation_request.client.phone,
+        "consultation_type": consultation_request.consultation_type,
+        "urgent": consultation_request.urgent,
+        "comment": consultation_request.comment,
+        "documents": document_titles,
+    })

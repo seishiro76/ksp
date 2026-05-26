@@ -4,7 +4,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Лабораторная 10</title>
+    <title>Лабораторная 11</title>
 </head>
 <body>
     <h1>Добавление заявки на консультацию</h1>
@@ -27,7 +27,8 @@
         </p>
         <p>
             {{ client_form.email.label_tag }}<br>
-            {{ client_form.email }}
+            {{ client_form.email }}<br>
+            <span id="email-check-result"></span>
         </p>
         <p>
             {{ client_form.confirm_email.label_tag }}<br>
